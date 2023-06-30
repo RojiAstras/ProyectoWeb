@@ -1,0 +1,268 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Home</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+    integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+  <link rel="stylesheet" href="{% static 'css/index.css' %}">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300&display=swap" rel="stylesheet">
+</head>
+
+<body>
+  <header>
+
+    <!-- Modal -->
+    <div class="modal fade" id="ModalIni" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="ModalIni">Inicio sesion</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div>
+              <div class="container- bg-white">
+                <form action="{% url 'Login3' TA=Tart TP=Tpet %}" method="POST">
+                  {% csrf_token %}
+          
+                  <pre>Username: <input type="text" name="nombre"></pre>
+                  <pre>Contraseña: <input type="password" name="contraseña"></pre>
+                  <button class="btn btn-primary md-2 " type="button"><input type="submit" value="Login"></button>
+                  <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalRegisterForm">Registrar</button>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="ModalRegisterForm" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="ModalIni">Registrar</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div>
+              <div class="container- bg-white">
+                <form action="{% url 'Register' %}" method="POST">
+                  {% csrf_token %}
+          
+                  <pre>Username: <input type="text" name="nombre"></pre>
+                  <pre>Email: <input type="email" name="mail"></pre>
+                  <pre>Contraseña: <input type="password" name="contraseña"></pre>
+                  <button class="btn btn-primary md-2 " type="button"><input type="submit" value="Registrar"></button>
+                  
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- Modal -->
+    <div class="modal fade" id="ModalShop" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+      <div class="modal-dialog">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="ModalShop">Carrito de compras</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            {% for tmp in CarritoProductos %}
+              <p>{{tmp.nom_producto}}: ${{tmp.precio_producto}} <a href="{% url 'del_Compra_Producto' TA=Tart TP=Tpet pk=tmp.id_producto%}">Eliminar</a></p>
+            {% endfor %}
+            <hr>
+            <p>Total: ${{CTotal.T}}</p>
+          </div>
+          <div class="modal-footer">
+            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Seguir navegando</button>
+            <button type="button" class="btn btn-primary" data-bs-dismiss="modal">Ir a pagar!</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="container-fluid p-5 bg-dark text-white text-center">
+      <h1>Happy Pets</h1>
+    </div>
+    <div class="container-fluid p-1 bg-primary text-white text-center">
+      <div class="d-grid gap-1 d-md-flex justify-content-md-end">
+        <form class="d-flex">
+          <input class="form-control me-2" type="text" placeholder="Nombre producto">
+          <button class="btn btn-primary" type="button"><a href="{% url 'compra'%}">Buscar</a></button></a>
+        </form>
+        {% if user.is_authenticated %}
+          <p class="mt-3">{{user.username}}</p>
+          <button class="btn btn-primary" type="button"><a href="{% url 'logout3' TA=Tart TP=Tpet %}">Cerrar Sesion</a></button>
+        {% else %}
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalIni">Login</button>
+        {% endif %}
+        <!--<button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalIni">Inicio de sesion</button>-->
+        {% if request.user.groups.all.0.name == "Admins Group" %}
+          <button class="btn btn-primary" type="button"><a href="{% url 'product_admin' %}">Agregar Productos</a></button>
+        {% endif %}
+        <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#ModalShop">
+          Carrito
+        </button>
+      </div>
+    </div>
+
+      <nav class="navbar navbar-expand-lg navbar-dark bg-dark ">
+        <div class="container-fluid">
+          <a class="navbar-brand" href="{% url 'index'%}">Productos</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDarkDropdown"
+            aria-controls="navbarNavDarkDropdown" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse justify-content-center" id="navbarNavDarkDropdown">
+            <ul class="navbar-nav">
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button"
+                  data-bs-toggle="dropdown" aria-expanded="false">
+                  Perros
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                  <li><a class="dropdown-item" href="{% url 'compraT' TA='comida' TP='perro'%}">Alimentos para perros</a></li>
+                  <li><a class="dropdown-item" href="{% url 'compraT' TA='premios' TP='perro'%}">Premios para perros</a></li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button"
+                  data-bs-toggle="dropdown" aria-expanded="false">
+                  Gatos
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                  <li><a class="dropdown-item" href="{% url 'compraT' TA='comida' TP='gato'%}">Alimentos para gatos</a></li>
+                  <li><a class="dropdown-item" href="{% url 'compraT' TA='premios' TP='gato'%}">Premios para gatos</a></li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button"
+                  data-bs-toggle="dropdown" aria-expanded="false">
+                  Accesorios
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                  <li><a class="dropdown-item" href="{% url 'compraT' TA='accesorios' TP='perro'%}">Accesorios para perros</a></li>
+                  <li><a class="dropdown-item" href="{% url 'compraT' TA='accesorios' TP='gato'%}">Accesorios para gatos</a></li>
+                </ul>
+              </li>
+              <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDarkDropdownMenuLink" role="button"
+                  data-bs-toggle="dropdown" aria-expanded="false">
+                  Farmacia
+                </a>
+                <ul class="dropdown-menu dropdown-menu-dark" aria-labelledby="navbarDarkDropdownMenuLink">
+                  <li><a class="dropdown-item" href="{% url 'compra'%}">Desparacitarios</a></li>
+                  <li><a class="dropdown-item" href="{% url 'compra'%}">Higene y aseo</a></li>
+                  <li><a class="dropdown-item" href="{% url 'compra'%}">Cuidado dental</a></li>
+                  <li><a class="dropdown-item" href="{% url 'compra'%}">Vitaminas y suplementos</a></li>
+                  <li><a class="dropdown-item" href="{% url 'compra'%}">Neutralizador de olores</a></li>
+                </ul>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+      
+  
+    </header>
+
+   
+    <section class="container- py-5 bg-white">
+      <div class="row" id="productos">
+        {% for tmp in Productos %}
+        <div class="col-md-12 col-lg-3 mb-4 mb-lg-0">
+        <form action="{% url 'addCarrito' TA=Tart TP=Tpet %}" method="POST">
+          {% csrf_token %}
+          <div class=' bg-white'>
+            <div class='card  min-vh-25 text-center shadow m-3 p-3 mb-5 bg-body rounded'>
+              <input type="hidden" value="{{tmp.id_producto}}" name="idpro">
+              <img src='{{tmp.img_producto}}' class='card-img-top'>
+              <div class='card-body'>
+                <p class='card-text'>{{tmp.nom_producto}}</p>
+                <p class='card-text'>
+                  <em>${{tmp.precio_producto}}</em>
+                </p>
+                <input type="submit" value="Agregar al Carrito">
+              </div>
+            </div>
+          </div>
+        </form>
+        </div>
+        {% endfor %}
+      </div>  
+    </section>
+
+
+    <!--footer-->
+    <div class="container- w-100 bottom-0 bg-dark">
+      <footer>
+        <div class="container p-4">
+          <div class="row">
+            <div class="col-lg-6 col-md-12 mb-4">
+              <!--descripcion final pagina-->
+              <h5 class="mb-3 text-center text-white">Informacion de la pagina</h5>
+              <p class="text-center text-white">
+                Lorem ipsum dolor sit amet consectetur, adipisicing elit. Iste atque ea quis
+                molestias. Fugiat pariatur maxime quis culpa corporis vitae repudiandae aliquam
+                voluptatem veniam, est atque cumque eum delectus sint!
+            </p>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-4">
+              <h5 class="mb-3 text-white">links</h5>
+              <ul class="list-unstyled mb-0">
+                <!--links-->
+                <li class="mb-1">
+                  <a href="#!">Seccion Preguntas Frecuentes</a>
+                </li>
+                <li class="mb-1">
+                  <a href="#!">Delivery</a>
+                </li>
+              </ul>
+            </div>
+          <div class="col-lg-3 col-md-6 mb-4">
+              <h5 class="mb-1 text-white">opening hours</h5>
+              <table class="table">
+                <tbody class="text-white">
+                  <tr>
+                    <td>Mon - Fri:</td>
+                    <td>8am - 9pm</td>
+                  </tr>
+                  <tr>
+                    <td>Sat - Sun:</td>
+                    <td>8am - 1am</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+    <script src="https://code.jquery.com/jquery-3.6.4.min.js"
+    integrity="sha256-oP6HI9z1XaZNBrJURtCoUT5SUnxFr8s3BzRl+cbzUq8=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"
+    integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p"
+    crossorigin="anonymous"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+      integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/js/bootstrap.bundle.min.js"
+      integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM"
+      crossorigin="anonymous">
+    </script>
+    <script src="{% static 'js/apicall.js'%}"></script>
+    
+  
+</body>
+
+</html>

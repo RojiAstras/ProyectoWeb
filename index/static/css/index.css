@@ -1,0 +1,26 @@
+* {
+    font-family: 'Ubuntu', sans-serif;
+}
+
+.btn a{
+    text-decoration: none;
+    color: #fff;
+}
+
+.btn a:hover{
+    background: #14f;
+    text-decoration: none;
+    color: #fff;
+}
+
+.error {
+    color: #a11;
+}
+
+.navbar.second-navbar {
+    z-index:1;
+  }
+  
+.dropdown-menu {
+    z-index:2;
+}
